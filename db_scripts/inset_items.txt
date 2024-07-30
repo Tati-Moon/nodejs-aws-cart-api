@@ -1,0 +1,68 @@
+INSERT INTO users (login, email, password)
+VALUES
+  ('test1', 'test1@test.com', 'TEST_PASSWORD'),
+  ('test2', 'test2@test.com', 'TEST_PASSWORD'),
+  ('test3', 'test3@test.com', 'TEST_PASSWORD');
+
+--
+INSERT INTO carts (user_id)
+SELECT
+  users.id
+FROM users;
+
+--
+CREATE TABLE products (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  price INTEGER NOT NULL CHECK (price >= 0),
+  photo TEXT
+);
+
+--
+INSERT INTO products (id, title, description, price, photo)
+VALUES
+  ('441905d7-55c7-4814-85be-b3e6045b29b2', 'Jelly berry tart', 'Calories 351 kcal
+Protein 4.7 g
+Fats 9.3 g
+Carbohydrates 64.2 g
+Dietary fibre 0.2 g
+Water 21 g
+', 6, 'https://i1.wallbox.ru/wallpapers/main2/201721/eda-klubnika-agody-desert-zele-piroznoe-sufle.jpg'),
+  ('9e97bd18-0774-4973-9b0f-bcea77f8b9bf', 'Japanese dessert mochi', 'Calories: 227 kcal
+Protein: 2.3 g
+Fats: 4g
+Carbohydrates: 46.1g', 7, 'https://n1s2.hsmedia.ru/ee/ef/a0/eeefa0d468d1b539a327317e914de4c1/728x546_1_5c585daf758c7108d0165f35dc3b0e95@1370x1027_0xac120003_20566839271599941908.jpg'),
+  ('b1ef394c-89db-4e86-afc2-de3a5f5d56fa', 'Chocolate cakes with berry jam', 'Calories 461 kcal
+Protein 6.1 g 
+Fats 26 g
+Carbohydrates 50.6 g
+Dietary fibre 1.5 g 
+Water 14.8 g', 8, 'https://zira.uz/wp-content/uploads/2020/11/shokoladnye-pirozhnye-artel-3.jpg');
+
+--
+INSERT INTO cart_items (cart_id, product_id, count, price)
+SELECT
+  carts.id AS cart_id,
+  products.id AS product_id,
+  floor(random() * 5 + 1) AS count,
+  products.price AS price
+FROM carts
+JOIN users ON carts.user_id = users.id
+JOIN products ON true;
+
+--
+
+
+INSERT INTO orders (user_id, cart_id, payment, delivery, comments, total)
+SELECT
+  users.id AS user_id,
+  carts.id AS cart_id,
+  '{"method": "credit_card", "amount": 55}'::jsonb AS payment,
+  '{"address": "Poland, targowa 53c", "city": "Lodz", "zipcode": "90-323", "firstName": "Test_FirstName", "lastName": "Test_LastName"}'::jsonb AS delivery,
+  'Happy comments' AS comments,
+  floor(random() * 50 + 10) AS total
+FROM carts
+JOIN users ON carts.user_id = users.id;
+
+DROP table if exists products CASCADE;
