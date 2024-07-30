@@ -11,13 +11,12 @@ import { Pool } from 'pg';
       useFactory: async () => {
         return new Pool({
           host:
-            process.env.DATABASE_HOST ||
-            'database-1.cpukomqyes2t.us-east-1.rds.amazonaws.com',
-          user: process.env.DATABASE_USERNAME || 'postgres',
-          password: process.env.DATABASE_PASSWORD || 'ENWwRKuZXd9iV1EpcJzH',
-          database: process.env.DATABASE_NAME || 'postgres',
-          port: +process.env.DATABASE_PORT || 5432,
-          ssl: {
+            process.env.DATABASE_HOST,
+            user: process.env.DATABASE_USERNAME,
+            password: process.env.DATABASE_PASSWORD,
+            database: process.env.DATABASE_NAME,
+            port: +process.env.DATABASE_PORT,
+            ssl: {
             rejectUnauthorized: false,
           },
         });
