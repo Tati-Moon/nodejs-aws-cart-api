@@ -1,0 +1,47 @@
+.dockerignore
+README.md
+LICENSE
+**/docker-compose*
+**/Dockerfile*
+
+#Git
+!**/.gitignore
+!.git/HEAD
+!.git/config
+!.git/packed-refs
+!.git/refs/heads/**
+**/.git
+**/.gitignore
+
+# compiled output
+/dist
+/node_modules
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+
+# Tests
+/coverage
+/.nyc_output
+
+# IDEs and editors
+/.idea
+.project
+**/.vscode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+#Lint
+.eslintrc.js
+.prettierrc
+
+npm-debug.log
+.env*

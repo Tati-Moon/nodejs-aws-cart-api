@@ -73,3 +73,25 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
   Nest is [MIT licensed](LICENSE).
+
+## Python
+```bash
+$ pip install virtualenv
+$ pip --version
+$ python -m pip install --upgrade pip
+```
+
+## Docker
+```bash
+$ docker build -t cart-service .
+$ docker run -d -p 4000:4000 --name cart-service-container cart-service:latest
+$ docker exec -it cart-service-container sh
+$ docker images
+```  
+
+## Eb
+```bash
+$ eb init
+$ eb create --cname tati-moon-cart-api-dev --single
+$ eb deploy
+``` 
