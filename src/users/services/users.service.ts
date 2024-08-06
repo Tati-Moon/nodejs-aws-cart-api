@@ -1,28 +1,52 @@
 import { Injectable } from '@nestjs/common';
-
-import { v4 } from 'uuid';
-
-import { User } from '../models';
+import { User as UserDTO } from '../models';
+import { User as UserEntity } from '../../entities/User.entity';
+import { DatabaseService } from '../../database/database.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UsersService {
-  private readonly users: Record<string, User>;
+  constructor(private databaseService: DatabaseService) {}
 
-  constructor() {
-    this.users = {}
+  async findOne(login: string): Promise<UserDTO | null> {
+    const query = 'SELECT * FROM users WHERE login = $1';
+    const result = await this.databaseService.query(query, [login]);
+
+    if (result.rows.length === 0) {
+      return null;
+    }
+
+    const userEntity = result.rows[0];
+    return this.toDTO(userEntity);
   }
 
-  findOne(userId: string): User {
-    return this.users[ userId ];
+  async createOne(user: UserDTO): Promise<UserDTO> {
+    const id = uuidv4();
+    const query = `
+      INSERT INTO users (id, login, email, password, created_at, updated_at)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *;
+    `;
+    const values = [
+      id,
+      user.name,
+      user.email,
+      user.password,
+      new Date(),
+      new Date(),
+    ];
+
+    const result = await this.databaseService.query(query, values);
+    const userEntity = result.rows[0];
+    return this.toDTO(userEntity);
   }
 
-  createOne({ name, password }: User): User {
-    const id = v4();
-    const newUser = { id: name || id, name, password };
-
-    this.users[ id ] = newUser;
-
-    return newUser;
+  private toDTO(userEntity: UserEntity): UserDTO {
+    return {
+      id: userEntity.id,
+      name: userEntity.login,
+      email: userEntity.email,
+      password: userEntity.password,
+    };
   }
-
 }
